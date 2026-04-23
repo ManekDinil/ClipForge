@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scissors, Twitter, Github, Linkedin, Disc } from 'lucide-react';
+import { Scissors, MessageCircle, Code, Briefcase, MessageSquare } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -48,17 +48,17 @@ export default function Footer() {
           <div className="col-span-1">
             <h4 className="text-white font-semibold mb-4">Connect</h4>
             <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all">
-                <Twitter className="w-5 h-5" />
+              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all" title="Twitter/X">
+                <MessageCircle className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all">
-                <Github className="w-5 h-5" />
+              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all" title="GitHub">
+                <Code className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all">
-                <Linkedin className="w-5 h-5" />
+              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all" title="LinkedIn">
+                <Briefcase className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all">
-                <Disc className="w-5 h-5" />
+              <a href="#" className="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-gray-400 hover:text-accent hover:border-accent border border-transparent transition-all" title="Discord">
+                <MessageSquare className="w-5 h-5" />
               </a>
             </div>
           </div>

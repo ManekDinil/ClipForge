@@ -4,6 +4,8 @@ import { useTheme } from './context/ThemeContext';
 import UploadDashboard from './pages/UploadDashboard';
 import ClipEditor from './pages/ClipEditor';
 import Footer from './components/Footer';
+import FAQ from './components/FAQ';
+import Features from './components/Features';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -126,6 +128,8 @@ export default function App() {
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <Hero onGetStarted={() => setCurrentPage('upload')} />
+          <Features />
+          <FAQ />
           <Footer />
         </div>
       )}
