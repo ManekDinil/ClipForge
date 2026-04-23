@@ -1,0 +1,64 @@
+SOFTWARE REQUIREMENTS
+SPECIFICATION
+Project: ClipForge • Version 1.0.0 • Date: April 20, 2026
+1. Introduction
+1.1 Purpose
+This document specifies the functional and non-functional requirements for the ClipForge frontend
+platform. It serves as a comprehensive guide for developers and stakeholders to ensure the user
+interface (UI) and user experience (UX) align with the goal of AI-driven short-form video
+generation.
+1.2 Scope
+ClipForge is a React-based web application designed to automate the extraction of high-
+engagement clips from long-form video content. It manages video uploads, AI-driven clip
+processing visualization, and fine-tuning via a specialized editor suite.
+2. General Description
+2.1 Technical Foundation
+Framework: React.js for component-based UI architecture.
+Styling: Tailwind CSS for modern, responsive design.
+Routing: react-router-dom for seamless multi-page navigation.
+Icons: Lucide-React for professional iconography.
+• 
+• 
+• 
+• 2.2 Core Product Pillars
+Landing Page: High-impact entry point with a "Start for Free" call to action.
+Upload Dashboard: User-centric interface for video ingestion and processing tracking.
+Clip Editor: Advanced toolset for reviewing and styling AI-generated content.
+3. Functional Requirements
+Feature
+ID Component Requirement Description
+FR-1 Video UploaderDrag-and-drop zone with real-time progress simulation and format
+validation.
+FR-2 AI Caption
+Editor
+Dual-pane layout with a 9:16 vertical preview and an editing sidebar
+for styling.
+FR-3 Sync Timeline Timestamped transcription blocks allowing manual correction of AI-
+generated text.
+FR-4 Viral Scoring Visual badges predicting social performance for each highlight clip.
+FR-5 AI Regeneration"Magic" button to trigger re-analysis of specific clips for improved
+results.
+4. Non-Functional Requirements
+4.1 Performance & Reliability
+Performance: Targeted Lighthouse score of 90+ in Performance, Accessibility, and SEO.
+Load Time: First Contentful Paint (FCP) under 1.5 seconds.
+Usability: Fully responsive across mobile (375px), tablet (768px), and desktop (1440px)
+breakpoints.
+• 
+• 
+• 
+• 
+• 
+• 4.2 Security
+Secure management of user sessions via JWT (JSON Web Tokens) and input sanitization to
+prevent XSS (Cross-Site Scripting) attacks during caption editing.
+5. Roadmap
+The current implementation focuses on the frontend architecture. Future development phases will
+include:
+FFmpeg Integration: Server-side logic for video manipulation and high-speed cutting.
+OpenAI Whisper: Automated, high-accuracy transcription and subtitle logic.
+Template Library: One-click styling for TikTok, Instagram Reels, and YouTube Shorts.
+© 2026 ClipForge Technologies • Technical Documentation Version 1.0.0 
+• 
+• 
+• 
