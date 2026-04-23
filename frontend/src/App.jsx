@@ -3,6 +3,7 @@ import { Menu, X, Play, Scissors, Zap, ChevronRight } from 'lucide-react';
 import { useTheme } from './context/ThemeContext';
 import UploadDashboard from './pages/UploadDashboard';
 import ClipEditor from './pages/ClipEditor';
+import Footer from './components/Footer';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -122,10 +123,11 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-background font-sans selection:bg-accent selection:text-black theme-${theme}`}>
       {currentPage === 'landing' && (
-        <>
+        <div className="flex flex-col min-h-screen">
           <Navbar />
           <Hero onGetStarted={() => setCurrentPage('upload')} />
-        </>
+          <Footer />
+        </div>
       )}
 
       {currentPage === 'upload' && (
