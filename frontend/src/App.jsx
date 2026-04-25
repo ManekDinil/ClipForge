@@ -6,6 +6,8 @@ import ClipEditor from './pages/ClipEditor';
 import Footer from './components/Footer';
 import FAQ from './components/FAQ';
 import Features from './components/Features';
+import HowItWorks from './components/HowItWorks';
+import Pricing from './components/Pricing';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -129,6 +131,8 @@ export default function App() {
           <Navbar />
           <Hero onGetStarted={() => setCurrentPage('upload')} />
           <Features />
+          <HowItWorks />
+          <Pricing />
           <FAQ />
           <Footer />
         </div>
