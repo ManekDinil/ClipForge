@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Scissors } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -29,81 +30,91 @@ export default function AuthPage() {
 
       {/* Glassmorphism Card */}
       <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-10 rounded-3xl shadow-2xl max-w-md w-full w-[90%] z-10 transition-all duration-500">
-        <h1 className="text-3xl font-bold text-white mb-2 text-center">
-          {isLogin ? 'Welcome Back' : 'Create Account'}
-        </h1>
-        <p className="text-gray-400 mb-8 text-center">
-          {isLogin 
-            ? 'Sign in to access your dashboard and projects.' 
-            : 'Join ClipForge to automate your viral content creation.'}
-        </p>
-        
-        {/* Form Container */}
-        <div className="space-y-5">
-          
-          {/* Conditional Username Field */}
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Username</label>
-              <input 
-                type="text" 
-                placeholder="ClipCreator99" 
-                className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors placeholder:text-gray-600" 
-              />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={isLogin ? 'signin' : 'signup'}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            <h1 className="text-3xl font-bold text-white mb-2 text-center">
+              {isLogin ? 'Welcome Back' : 'Create Account'}
+            </h1>
+            <p className="text-gray-400 mb-8 text-center">
+              {isLogin 
+                ? 'Sign in to access your dashboard and projects.' 
+                : 'Join ClipForge to automate your viral content creation.'}
+            </p>
+            
+            {/* Form Container */}
+            <div className="space-y-5">
+              
+              {/* Conditional Username Field */}
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">Username</label>
+                  <input 
+                    type="text" 
+                    placeholder="ClipCreator99" 
+                    className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600" 
+                  />
+                </div>
+              )}
+
+              {/* Email Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
+                <input 
+                  type="email" 
+                  placeholder="you@example.com" 
+                  className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600" 
+                />
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
+                <input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600" 
+                />
+              </div>
+
+              {/* Sign In Extras */}
+              {isLogin && (
+                <div className="flex items-center justify-between mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <input type="checkbox" className="w-4 h-4 rounded border-gray-600 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 bg-transparent cursor-pointer" />
+                    <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">Remember Me</span>
+                  </label>
+                  <a href="#" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors">
+                    Forgot Password?
+                  </a>
+                </div>
+              )}
+
+              {/* Action Button */}
+              <button className="w-full bg-accent text-black font-bold text-lg py-3.5 rounded-xl hover:bg-[#32e512] shadow-[0_0_20px_rgba(57,255,20,0.4)] hover:shadow-[0_0_30px_rgba(57,255,20,0.6)] hover:scale-[1.02] transition-all duration-300 mt-6">
+                {isLogin ? 'Sign In' : 'Sign Up'}
+              </button>
             </div>
-          )}
 
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
-            <input 
-              type="email" 
-              placeholder="you@example.com" 
-              className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors placeholder:text-gray-600" 
-            />
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
-            <input 
-              type="password" 
-              placeholder="••••••••" 
-              className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors placeholder:text-gray-600" 
-            />
-          </div>
-
-          {/* Sign In Extras */}
-          {isLogin && (
-            <div className="flex items-center justify-between mt-2">
-              <label className="flex items-center gap-2 cursor-pointer group">
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-600 text-accent focus:ring-accent focus:ring-offset-0 bg-transparent cursor-pointer" />
-                <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">Remember Me</span>
-              </label>
-              <a href="#" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors">
-                Forgot Password?
-              </a>
+            {/* Toggle View Link */}
+            <div className="mt-8 text-center">
+              <p className="text-sm text-gray-400">
+                {isLogin ? "Don't have an account? " : "Already have an account? "}
+                <button 
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="font-bold text-white hover:text-accent transition-colors focus:outline-none"
+                >
+                  {isLogin ? 'Sign up for free' : 'Sign In'}
+                </button>
+              </p>
             </div>
-          )}
-
-          {/* Action Button */}
-          <button className="w-full bg-accent text-black font-bold text-lg py-3.5 rounded-xl hover:bg-[#32e512] shadow-[0_0_20px_rgba(57,255,20,0.4)] hover:shadow-[0_0_30px_rgba(57,255,20,0.6)] hover:scale-[1.02] transition-all duration-300 mt-6">
-            {isLogin ? 'Sign In' : 'Sign Up'}
-          </button>
-        </div>
-
-        {/* Toggle View Link */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-400">
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button 
-              onClick={() => setIsLogin(!isLogin)}
-              className="font-bold text-white hover:text-accent transition-colors focus:outline-none"
-            >
-              {isLogin ? 'Sign up for free' : 'Sign In'}
-            </button>
-          </p>
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
