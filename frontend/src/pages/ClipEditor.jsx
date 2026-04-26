@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AICaptionEditor from '../components/editor/AICaptionEditor';
 import SyncTimeline from '../components/timeline/SyncTimeline';
 import ViralScoringBadge from '../components/editor/ViralScoringBadge';
 import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 
-export default function ClipEditor({ onNavigateBack }) {
+export default function ClipEditor() {
+  const navigate = useNavigate();
   // Mock transcription data as specified in FR-3
   const [transcriptions, setTranscriptions] = useState([
     { id: 1, start: 0, end: 2.5, text: 'Welcome to ClipForge.' },
@@ -34,7 +36,7 @@ export default function ClipEditor({ onNavigateBack }) {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <button 
-              onClick={onNavigateBack}
+              onClick={() => navigate('/upload')}
               className="p-2 rounded-full bg-surface border border-gray-800 hover:border-accent hover:text-accent transition-colors text-gray-400"
             >
               <ArrowLeft className="w-5 h-5" />

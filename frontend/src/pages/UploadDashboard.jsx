@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FileUploader from '../components/uploader/FileUploader';
 import { ArrowLeft, Video } from 'lucide-react';
 
-export default function UploadDashboard({ onNavigateBack, onProceedToEditor }) {
+export default function UploadDashboard() {
+  const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState(null);
 
   const handleUploadComplete = (file) => {
@@ -16,7 +18,7 @@ export default function UploadDashboard({ onNavigateBack, onProceedToEditor }) {
         
         {/* Navigation / Header */}
         <button 
-          onClick={onNavigateBack}
+          onClick={() => navigate('/')}
           className="group flex items-center gap-2 text-gray-400 hover:text-accent transition-colors mb-8"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -46,7 +48,7 @@ export default function UploadDashboard({ onNavigateBack, onProceedToEditor }) {
           {uploadedFile && (
             <div className="mt-8 flex justify-center animate-in slide-in-from-bottom-4 duration-500">
               <button 
-                onClick={onProceedToEditor}
+                onClick={() => navigate('/editor')}
                 className="px-8 py-4 bg-accent text-black font-bold rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(57,255,20,0.3)]"
               >
                 Proceed to Editor &rarr;
