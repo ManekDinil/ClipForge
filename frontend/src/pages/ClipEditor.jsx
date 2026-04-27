@@ -36,7 +36,7 @@ export default function ClipEditor() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => navigate('/upload')}
+              onClick={() => navigate('/dashboard')}
               className="p-2 rounded-full bg-surface border border-gray-800 hover:border-accent hover:text-accent transition-colors text-gray-400"
             >
               <ArrowLeft className="w-5 h-5" />
