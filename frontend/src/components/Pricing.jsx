@@ -53,7 +53,7 @@ export default function Pricing() {
   const [currency, setCurrency] = useState('USD');
 
   return (
-    <section className="py-24 bg-slate-950 relative border-t border-slate-900" id="pricing">
+    <section className="py-24 bg-background relative border-t border-gray-800" id="pricing">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header & Toggle */}
@@ -64,17 +64,17 @@ export default function Pricing() {
           
           {/* Currency Toggle */}
           <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-medium ${currency === 'USD' ? 'text-white' : 'text-slate-400'}`}>USD ($)</span>
+            <span className={`text-sm font-medium ${currency === 'USD' ? 'text-white' : 'text-gray-400'}`}>USD ($)</span>
             <button 
               onClick={() => setCurrency(currency === 'USD' ? 'INR' : 'USD')}
-              className="relative w-14 h-7 bg-slate-800 rounded-full border border-slate-700 focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
+              className="relative w-14 h-7 bg-[#252525] rounded-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
               aria-label="Toggle currency"
             >
               <div 
                 className={`absolute top-1 w-5 h-5 bg-accent rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(57,255,20,0.5)] ${currency === 'USD' ? 'left-1' : 'left-8'}`}
               ></div>
             </button>
-            <span className={`text-sm font-medium ${currency === 'INR' ? 'text-white' : 'text-slate-400'}`}>INR (₹)</span>
+            <span className={`text-sm font-medium ${currency === 'INR' ? 'text-white' : 'text-gray-400'}`}>INR (₹)</span>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ export default function Pricing() {
           {pricingTiers.map((tier, index) => (
             <div 
               key={index} 
-              className={`relative bg-slate-900 rounded-3xl p-8 flex flex-col h-full transition-all duration-300 ${tier.recommended ? 'border-2 border-accent shadow-[0_0_30px_rgba(57,255,20,0.15)] md:-mt-8 md:mb-8 md:scale-105' : 'border border-slate-800 hover:border-slate-700'}`}
+              className={`relative bg-surface rounded-3xl p-8 flex flex-col h-full transition-all duration-300 ${tier.recommended ? 'border-2 border-accent shadow-[0_0_30px_rgba(57,255,20,0.15)] md:-mt-8 md:mb-8 md:scale-105' : 'border border-gray-800 hover:border-gray-700'}`}
             >
               {/* Recommended Badge */}
               {tier.recommended && (
@@ -97,12 +97,12 @@ export default function Pricing() {
               {/* Tier Info */}
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-white mb-2">{tier.name}</h3>
-                <p className="text-slate-400 text-sm mb-6 h-10">{tier.description}</p>
+                <p className="text-gray-400 text-sm mb-6 h-10">{tier.description}</p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-extrabold text-white">
                     {currency === 'USD' ? `$${tier.priceUSD}` : `₹${tier.priceINR}`}
                   </span>
-                  <span className="text-slate-500 font-medium">/month</span>
+                  <span className="text-gray-500 font-medium">/month</span>
                 </div>
               </div>
 
@@ -110,15 +110,15 @@ export default function Pricing() {
               <ul className="space-y-4 mb-8 flex-1">
                 {tier.features.map((feature, fIndex) => (
                   <li key={fIndex} className="flex items-start gap-3">
-                    <Check className={`w-5 h-5 flex-shrink-0 ${tier.recommended ? 'text-accent' : 'text-slate-500'}`} />
-                    <span className="text-slate-300 text-sm">{feature}</span>
+                    <Check className={`w-5 h-5 flex-shrink-0 ${tier.recommended ? 'text-accent' : 'text-gray-500'}`} />
+                    <span className="text-gray-300 text-sm">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               {/* CTA Button */}
               <button 
-                className={`w-full py-4 rounded-xl font-bold transition-all duration-300 ${tier.recommended ? 'bg-accent text-black hover:bg-[#32e512] shadow-[0_0_15px_rgba(57,255,20,0.3)] hover:shadow-[0_0_25px_rgba(57,255,20,0.5)]' : 'bg-slate-800 text-white hover:bg-slate-700 border border-slate-700'}`}
+                className={`w-full py-4 rounded-xl font-bold transition-all duration-300 ${tier.recommended ? 'bg-accent text-black hover:bg-[#32e512] shadow-[0_0_15px_rgba(57,255,20,0.3)] hover:shadow-[0_0_25px_rgba(57,255,20,0.5)]' : 'bg-[#252525] text-white hover:bg-gray-800 border border-gray-800'}`}
               >
                 {tier.cta}
               </button>
