@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AICaptionEditor from '../components/editor/AICaptionEditor';
 import SyncTimeline from '../components/timeline/SyncTimeline';
 import ViralScoringBadge from '../components/editor/ViralScoringBadge';
@@ -7,17 +7,51 @@ import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 
 export default function ClipEditor() {
   const navigate = useNavigate();
-  // Mock transcription data as specified in FR-3
-  const [transcriptions, setTranscriptions] = useState([
-    { id: 1, start: 0, end: 2.5, text: 'Welcome to ClipForge.' },
-    { id: 2, start: 2.5, end: 5.0, text: 'This is the AI Caption Editor.' },
-    { id: 3, start: 5.0, end: 7.5, text: 'Edit this text in the timeline to see it update live!' },
-    { id: 4, start: 7.5, end: 10.0, text: 'Our AI extracts the most viral moments automatically.' },
-    { id: 5, start: 10.0, end: 12.0, text: 'Perfect for TikTok and Reels.' }
-  ]);
-
-  // Active caption state (simulating playhead position)
+  const location = useLocation();
+  const [transcriptions, setTranscriptions] = useState([]);
   const [activeId, setActiveId] = useState(1);
+  const [score, setScore] = useState(92); // Default mock score
+
+  useEffect(() => {
+    // Prioritize routing state, fallback to localStorage
+    let data = null;
+    if (location.state && location.state.videoData) {
+      data = location.state.videoData;
+    } else {
+      const stored = localStorage.getItem('clipforge_transcription');
+      if (stored) {
+        try {
+          data = JSON.parse(stored);
+        } catch (e) {
+          console.error("Error parsing stored transcriptions:", e);
+        }
+      }
+    }
+
+    if (data && data.segments) {
+      const formatted = data.segments.map((seg, index) => ({
+        id: index + 1,
+        start: seg.start,
+        end: seg.end,
+        text: seg.text
+      }));
+      setTranscriptions(formatted);
+      
+      if (formatted.length > 0) {
+        setActiveId(formatted[0].id);
+        // If the backend provided a score on the first segment, use it
+        if (data.segments[0].score) {
+          setScore(data.segments[0].score);
+        }
+      }
+    } else {
+      // Fallback mock data if accessed directly without uploading
+      setTranscriptions([
+        { id: 1, start: 0, end: 2.5, text: 'Welcome to ClipForge.' },
+        { id: 2, start: 2.5, end: 5.0, text: 'Upload a real video to see Gemini in action!' }
+      ]);
+    }
+  }, []);
 
   // Two-way binding handler
   const handleTranscriptionEdit = (id, newText) => {
@@ -62,11 +96,10 @@ export default function ClipEditor() {
         {/* Dual-Pane Editor Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Left Pane: Video Preview & Scoring */}
           <div className="lg:col-span-5 xl:col-span-4 flex flex-col items-center">
             <AICaptionEditor activeCaption={activeCaption} />
             <div className="w-full max-w-sm mt-4">
-              <ViralScoringBadge transcriptions={transcriptions} score={92} />
+              <ViralScoringBadge transcriptions={transcriptions} score={score} />
             </div>
           </div>
           

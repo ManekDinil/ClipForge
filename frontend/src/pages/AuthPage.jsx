@@ -46,18 +46,18 @@ export default function AuthPage() {
         setError('Please fill in all fields.');
         return;
       }
-      
+
       // Prevent duplicate emails
       const emailExists = accounts.some(u => u.email === email);
       if (emailExists) {
         setError('An account with this email already exists.');
         return;
       }
-      
+
       const newUser = { email, username, password };
       accounts.push(newUser);
       localStorage.setItem('clipforge_accounts', JSON.stringify(accounts));
-      
+
       // Auto-login and redirect
       localStorage.setItem('clipforge_session', JSON.stringify(newUser));
       navigate('/dashboard');
@@ -66,7 +66,7 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center relative font-sans overflow-hidden">
-      
+
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-accent/10 blur-[150px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none translate-x-1/2 translate-y-1/2"></div>
@@ -75,7 +75,7 @@ export default function AuthPage() {
       <Link to="/" className="absolute top-8 left-8 text-gray-400 hover:text-accent flex items-center gap-2 transition-colors z-20">
         <ArrowLeft className="w-5 h-5" /> Back to Home
       </Link>
-      
+
       {/* Brand Header */}
       <div className="flex items-center gap-3 mb-8 z-10">
         <div className="w-12 h-12 rounded-xl bg-[#252525] border border-accent/50 flex items-center justify-center shadow-[0_0_15px_rgba(57,255,20,0.2)]">
@@ -87,7 +87,7 @@ export default function AuthPage() {
       </div>
 
       {/* Glassmorphism Card */}
-      <motion.div 
+      <motion.div
         layout
         className="bg-white/5 backdrop-blur-lg border border-white/10 p-10 rounded-3xl shadow-2xl max-w-md w-full w-[90%] z-10"
       >
@@ -95,15 +95,15 @@ export default function AuthPage() {
           {isLogin ? 'Welcome Back' : 'Create Account'}
         </motion.h1>
         <motion.p layout className="text-gray-400 mb-8 text-center">
-          {isLogin 
-            ? 'Sign in to access your dashboard and projects.' 
+          {isLogin
+            ? 'Sign in to access your dashboard and projects.'
             : 'Join ClipForge to automate your viral content creation.'}
         </motion.p>
-        
+
         {/* Error Message */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -119,7 +119,7 @@ export default function AuthPage() {
 
         {/* Form Container */}
         <form onSubmit={handleSubmit} className="space-y-5 flex flex-col">
-          
+
           {/* Conditional Username Field */}
           <AnimatePresence mode="popLayout">
             {!isLogin && (
@@ -131,12 +131,12 @@ export default function AuthPage() {
                 transition={{ duration: 0.3 }}
               >
                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Username</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="ClipCreator99" 
-                  className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600" 
+                  placeholder="ClipCreator99"
+                  className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600"
                 />
               </motion.div>
             )}
@@ -145,31 +145,31 @@ export default function AuthPage() {
           {/* Email Field */}
           <motion.div layout>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
-            <input 
+            <input
               type="text" // Using text to allow custom validation trigger instead of native browser popup
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com" 
-              className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600" 
+              placeholder="you@example.com"
+              className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600"
             />
           </motion.div>
 
           {/* Password Field */}
           <motion.div layout>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••" 
-              className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600" 
+              placeholder="••••••••"
+              className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3.5 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors placeholder:text-gray-600"
             />
           </motion.div>
 
           {/* Sign In Extras */}
           <AnimatePresence mode="popLayout">
             {isLogin && (
-              <motion.div 
+              <motion.div
                 key="extras"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -178,11 +178,11 @@ export default function AuthPage() {
                 className="flex items-center justify-between mt-2 overflow-hidden"
               >
                 <label className="flex items-center gap-2 cursor-pointer group py-2">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-600 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 bg-transparent cursor-pointer" 
+                    className="w-4 h-4 rounded border-gray-600 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 bg-transparent cursor-pointer"
                   />
                   <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">Remember Me</span>
                 </label>
@@ -203,7 +203,7 @@ export default function AuthPage() {
         <motion.div layout className="mt-8 text-center">
           <p className="text-sm text-gray-400">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button 
+            <button
               type="button"
               onClick={toggleView}
               className="font-bold text-white hover:text-accent transition-colors focus:outline-none"

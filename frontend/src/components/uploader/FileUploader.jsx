@@ -7,21 +7,53 @@ export default function FileUploader({ onUploadComplete }) {
   const [file, setFile] = useState(null);
 
   // Memoized callback to ensure high performance and prevent unnecessary re-renders
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length === 0) return;
     
     const selectedFile = acceptedFiles[0];
     setFile(selectedFile);
     setIsProcessing(true);
 
-    // Simulate the transition into a 'Processing' state
-    // In the future, this is where we'd start the FFmpeg/Whisper pipeline
-    setTimeout(() => {
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch("http://localhost:8000/process-video", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to process video: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      // Store Gemini response in local storage as mock global state
+      localStorage.setItem('clipforge_transcription', JSON.stringify(data));
+
       setIsProcessing(false);
       if (onUploadComplete) {
-        onUploadComplete(selectedFile);
+        onUploadComplete(selectedFile, data);
       }
-    }, 2500);
+    } catch (error) {
+      console.error("Error processing video:", error);
+      
+      // Fallback to mock data so the user can still proceed and test the Editor UI
+      const mockData = {
+        segments: [
+          { start: 0.0, end: 5.0, text: "Mock: Connection to Gemini API failed.", score: 50 },
+          { start: 5.0, end: 10.0, text: "Mock: But you can still test the ClipEditor UI!", score: 99 }
+        ]
+      };
+      
+      localStorage.setItem('clipforge_transcription', JSON.stringify(mockData));
+      setIsProcessing(false);
+      
+      if (onUploadComplete) {
+        onUploadComplete(selectedFile, mockData);
+      }
+    }
   }, [onUploadComplete]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

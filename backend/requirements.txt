@@ -2,26 +2,30 @@
 # Based on the planned server-side logic (FFmpeg, Whisper) and specific ML requirements
 
 # Base Deep Learning Framework
-torch==2.1.2
-torchvision==0.16.2
-torchaudio==2.1.2
+# torch==2.1.2
+# torchvision==0.16.2
+# torchaudio==2.1.2
 
 # 3D and Vision
-pytorch3d==0.7.5
+# pytorch3d==0.7.5
 
 # Contrastive Language-Image Pretraining (CLIP)
-open_clip_torch==2.24.0
+# open_clip_torch==2.24.0
 # Alternatively, to use OpenAI's official repository:
 # git+https://github.com/openai/CLIP.git@a1d071733d7111c9c014f024669f959182114e33
 
 # Audio Transcription (SRS Section 5 Roadmap)
-openai-whisper==20231117
+# openai-whisper==20231117
 
 # Video Processing (SRS Section 5 Roadmap)
-ffmpeg-python==0.2.0
+# ffmpeg-python==0.2.0
 
 # API and Security (SRS Section 4.2 - JWT)
 fastapi==0.109.0
 uvicorn==0.27.0
 python-jose[cryptography]==3.3.0
 python-multipart==0.0.9
+
+# Google Gemini Integration
+google-generativeai==0.8.4
+python-dotenv==1.0.1

@@ -6,10 +6,13 @@ import { ArrowLeft, Video } from 'lucide-react';
 export default function UploadDashboard() {
   const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [videoData, setVideoData] = useState(null);
 
-  const handleUploadComplete = (file) => {
+  const handleUploadComplete = (file, data) => {
     setUploadedFile(file);
-    // Future integration: move to the Editor suite
+    if (data) {
+      setVideoData(data);
+    }
   };
 
   return (
@@ -46,9 +49,9 @@ export default function UploadDashboard() {
           <FileUploader onUploadComplete={handleUploadComplete} />
 
           {uploadedFile && (
-            <div className="mt-8 flex justify-center animate-in slide-in-from-bottom-4 duration-500">
+            <div className="mt-8 flex justify-center animate-in slide-in-from-bottom-4 duration-500 relative z-10">
               <button 
-                onClick={() => navigate('/editor')}
+                onClick={() => navigate('/editor', { state: { videoData } })}
                 className="px-8 py-4 bg-accent text-black font-bold rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(57,255,20,0.3)]"
               >
                 Proceed to Editor &rarr;
