@@ -1,8 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Calendar, Edit3, Scissors, Play } from 'lucide-react';
 
 export default function ClipCard({ clip, onEdit }) {
   const videoRef = useRef(null);
+
+  const [activeSubtitle, setActiveSubtitle] = useState("");
+
+  const handleTimeUpdate = (e) => {
+    // Current time of the clip playback
+    const time = e.target.currentTime;
+    
+    // We need to check if the subtitles are relative to the clip start or global.
+    // Gemini returns global timestamps. Let's assume global for now.
+    const currentSub = (clip.subtitles || []).find(
+      s => time + clip.start >= s.start && time + clip.start <= s.end
+    );
+    setActiveSubtitle(currentSub ? currentSub.text : "");
+  };
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
@@ -38,6 +52,7 @@ export default function ClipCard({ clip, onEdit }) {
             ref={videoRef}
             src={clip.clipUrl}
             className="absolute inset-0 w-full h-full object-cover"
+            onTimeUpdate={handleTimeUpdate}
             loop
             muted
             playsInline
@@ -60,14 +75,16 @@ export default function ClipCard({ clip, onEdit }) {
           </div>
         </div>
 
-        {/* Caption Overlay */}
-        <div className="absolute top-[50%] left-0 w-full px-4 flex justify-center pointer-events-none">
-          <div className="bg-white px-3 py-2 rounded-lg max-w-[90%] text-center shadow-lg transform -translate-y-1/2">
-            <p className="text-sm font-bold text-black leading-tight line-clamp-3">
-              {clip.text}
-            </p>
+        {/* Caption Overlay (Moved higher to avoid controls as requested) */}
+        {activeSubtitle && (
+          <div className="absolute top-[35%] left-0 w-full px-4 flex justify-center pointer-events-none transition-opacity duration-200">
+            <div className="bg-white px-3 py-2 rounded-lg max-w-[90%] text-center shadow-xl transform -translate-y-1/2 border-2 border-black">
+              <p className="text-xs font-black text-black leading-tight uppercase tracking-tighter">
+                {activeSubtitle}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Footer Info */}

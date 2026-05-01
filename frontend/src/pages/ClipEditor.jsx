@@ -34,23 +34,25 @@ export default function ClipEditor() {
         id: index + 1,
         start: seg.start,
         end: seg.end,
-        text: seg.text,
-        clipUrl: seg.clipUrl
+        title: seg.title || seg.text || `Viral Moment ${index + 1}`,
+        subtitles: seg.subtitles || [],
+        clipUrl: seg.clipUrl,
+        score: seg.score
       }));
       setTranscriptions(formatted);
       // Format received data
     } else {
       // Fallback mock data if accessed directly without uploading
       setTranscriptions([
-        { id: 1, start: 0, end: 2.5, text: 'Welcome to ClipForge.' },
-        { id: 2, start: 2.5, end: 5.0, text: 'Upload a real video to see Gemini in action!' }
+        { id: 1, start: 0, end: 5.0, title: 'Welcome to ClipForge', subtitles: [{start: 0, end: 2.5, text: 'Welcome to ClipForge.'}, {start: 2.5, end: 5.0, text: 'The future of AI video.'}] },
+        { id: 2, start: 5.0, end: 10.0, title: 'AI Automation', subtitles: [{start: 5.0, end: 10.0, text: 'Upload a video to see the magic!'}] }
       ]);
     }
   }, []);
 
-  const handleSaveCaption = (id, newText) => {
+  const handleSaveTitle = (id, newTitle) => {
     setTranscriptions(prev => 
-      prev.map(t => (t.id === id ? { ...t, text: newText } : t))
+      prev.map(t => (t.id === id ? { ...t, title: newTitle } : t))
     );
     setEditingClipId(null);
   };
@@ -104,7 +106,7 @@ export default function ClipEditor() {
           <EditModal 
             clip={editingClip} 
             onClose={() => setEditingClipId(null)}
-            onSave={handleSaveCaption}
+            onSave={handleSaveTitle}
           />
         )}
         

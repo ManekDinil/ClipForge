@@ -3,7 +3,7 @@ import { X, Save } from 'lucide-react';
 import AICaptionEditor from './AICaptionEditor';
 
 export default function EditModal({ clip, onClose, onSave }) {
-  const [text, setText] = useState(clip.text);
+  const [text, setText] = useState(clip.title);
 
   // Focus lock and escape key handler
   useEffect(() => {
@@ -32,9 +32,9 @@ export default function EditModal({ clip, onClose, onSave }) {
         {/* Left Side: Video Preview */}
         <div className="w-full md:w-1/2 p-6 bg-[#0a0a0a] flex items-center justify-center border-r border-gray-800">
           <AICaptionEditor 
-            activeCaption={{ text }} 
+            clip={clip} 
             activeClipUrl={clip.clipUrl} 
-            videoRef={null} // We don't need external ref control here
+            videoRef={null} 
           />
         </div>
 

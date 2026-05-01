@@ -83,10 +83,10 @@ async def process_video(file: UploadFile = File(...)):
         prompt = (
             'Analyze the video and find the most engaging and viral moments. '
             'Extract a maximum of 5 distinct clips. Each clip MUST be at least 15 seconds long and no longer than 60 seconds. '
-            'Do NOT return granular word-by-word transcriptions. '
+            'Do NOT return granular word-by-word transcriptions for the "title". '
             'Return a JSON object strictly following this format: '
-            '{"segments": [{"start": float, "end": float, "text": string, "score": int}]} '
-            'where "text" is the engaging hook or caption for the entire clip, and "score" is a virality score from 1-100.'
+            '{"segments": [{"start": float, "end": float, "title": string, "score": int, "subtitles": [{"start": float, "end": float, "text": string}]}]} '
+            'where "title" is a catchy viral hook, and "subtitles" is a phrase-by-phrase transcription synchronized with the audio.'
         )
         print("Prompting Gemini 2.5 Flash...")
         model = genai.GenerativeModel(model_name="gemini-2.5-flash")
