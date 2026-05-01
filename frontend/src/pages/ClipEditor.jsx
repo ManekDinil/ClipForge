@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import AICaptionEditor from '../components/editor/AICaptionEditor';
-import SyncTimeline from '../components/timeline/SyncTimeline';
-import ViralScoringBadge from '../components/editor/ViralScoringBadge';
+import ClipCard from '../components/editor/ClipCard';
+import EditModal from '../components/editor/EditModal';
 import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 
 export default function ClipEditor() {
   const navigate = useNavigate();
   const location = useLocation();
   const [transcriptions, setTranscriptions] = useState([]);
-  const [activeId, setActiveId] = useState(1);
-  const [score, setScore] = useState(92); // Default mock score
+  const [editingClipId, setEditingClipId] = useState(null);
+  const videoUrl = location.state?.videoUrl;
 
   useEffect(() => {
     // Prioritize routing state, fallback to localStorage
     let data = null;
-    if (location.state && location.state.videoData) {
-      data = location.state.videoData;
+    const aiData = location.state?.aiData;
+    
+    if (aiData) {
+      data = aiData;
     } else {
       const stored = localStorage.getItem('clipforge_transcription');
       if (stored) {
@@ -33,17 +34,11 @@ export default function ClipEditor() {
         id: index + 1,
         start: seg.start,
         end: seg.end,
-        text: seg.text
+        text: seg.text,
+        clipUrl: seg.clipUrl
       }));
       setTranscriptions(formatted);
-      
-      if (formatted.length > 0) {
-        setActiveId(formatted[0].id);
-        // If the backend provided a score on the first segment, use it
-        if (data.segments[0].score) {
-          setScore(data.segments[0].score);
-        }
-      }
+      // Format received data
     } else {
       // Fallback mock data if accessed directly without uploading
       setTranscriptions([
@@ -53,14 +48,14 @@ export default function ClipEditor() {
     }
   }, []);
 
-  // Two-way binding handler
-  const handleTranscriptionEdit = (id, newText) => {
+  const handleSaveCaption = (id, newText) => {
     setTranscriptions(prev => 
       prev.map(t => (t.id === id ? { ...t, text: newText } : t))
     );
+    setEditingClipId(null);
   };
 
-  const activeCaption = transcriptions.find(t => t.id === activeId);
+  const editingClip = transcriptions.find(t => t.id === editingClipId);
 
   return (
     <div className="min-h-screen bg-background pt-24 px-4 sm:px-6 lg:px-8 font-sans pb-12">
@@ -93,27 +88,25 @@ export default function ClipEditor() {
           </div>
         </div>
 
-        {/* Dual-Pane Editor Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col items-center">
-            <AICaptionEditor activeCaption={activeCaption} />
-            <div className="w-full max-w-sm mt-4">
-              <ViralScoringBadge transcriptions={transcriptions} score={score} />
-            </div>
-          </div>
-          
-          {/* Right Pane: Sync Timeline */}
-          <div className="lg:col-span-7 xl:col-span-8">
-            <SyncTimeline 
-              transcriptions={transcriptions}
-              activeId={activeId}
-              onTranscriptionEdit={handleTranscriptionEdit}
-              onSetActiveId={setActiveId}
+        {/* Gallery Layout */}
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+          {transcriptions.map(clip => (
+            <ClipCard 
+              key={clip.id} 
+              clip={clip} 
+              onEdit={(id) => setEditingClipId(id)} 
             />
-          </div>
-          
+          ))}
         </div>
+
+        {/* Edit Modal Overlay */}
+        {editingClipId && editingClip && (
+          <EditModal 
+            clip={editingClip} 
+            onClose={() => setEditingClipId(null)}
+            onSave={handleSaveCaption}
+          />
+        )}
         
       </div>
     </div>

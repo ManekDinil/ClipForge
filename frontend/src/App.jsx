@@ -67,7 +67,7 @@ const Navbar = () => {
           <div className="hidden md:block relative">
             {user ? (
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface border border-accent/50 shadow-[0_0_15px_rgba(57,255,20,0.1)] hover:shadow-[0_0_20px_rgba(57,255,20,0.2)] hover:bg-[#252525] transition-all duration-300"
                 >
@@ -78,7 +78,7 @@ const Navbar = () => {
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-surface border border-gray-800 rounded-xl shadow-xl overflow-hidden z-50">
-                    <button 
+                    <button
                       onClick={() => {
                         navigate('/dashboard');
                         setIsDropdownOpen(false);
@@ -87,7 +87,7 @@ const Navbar = () => {
                     >
                       Dashboard
                     </button>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-3 text-red-400 hover:bg-red-500/10 transition-colors text-sm"
                     >
@@ -125,7 +125,7 @@ const Navbar = () => {
             <a href="#pricing" className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
             {user ? (
               <div className="flex flex-col gap-2 mt-4">
-                <button 
+                <button
                   onClick={() => {
                     navigate('/dashboard');
                     setIsOpen(false);
@@ -135,7 +135,7 @@ const Navbar = () => {
                   <span className="text-gray-400 text-sm">Welcome,</span>
                   <span className="text-accent font-bold tracking-wide">{user.username}</span>
                 </button>
-                <button 
+                <button
                   onClick={handleLogout}
                   className="w-full text-center bg-red-500/10 text-red-400 border border-red-500/20 px-6 py-3 rounded-md font-bold hover:bg-red-500/20 transition-colors"
                 >

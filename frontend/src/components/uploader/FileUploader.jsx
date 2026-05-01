@@ -18,7 +18,7 @@ export default function FileUploader({ onUploadComplete }) {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const response = await fetch("http://localhost:8000/process-video", {
+      const response = await fetch("http://127.0.0.1:8000/process-video", {
         method: "POST",
         body: formData,
       });
@@ -32,9 +32,10 @@ export default function FileUploader({ onUploadComplete }) {
       // Store Gemini response in local storage as mock global state
       localStorage.setItem('clipforge_transcription', JSON.stringify(data));
 
+      const videoUrl = URL.createObjectURL(selectedFile);
       setIsProcessing(false);
       if (onUploadComplete) {
-        onUploadComplete(selectedFile, data);
+        onUploadComplete(selectedFile, data, videoUrl);
       }
     } catch (error) {
       console.error("Error processing video:", error);
@@ -48,10 +49,12 @@ export default function FileUploader({ onUploadComplete }) {
       };
       
       localStorage.setItem('clipforge_transcription', JSON.stringify(mockData));
+      
+      const videoUrl = URL.createObjectURL(selectedFile);
       setIsProcessing(false);
       
       if (onUploadComplete) {
-        onUploadComplete(selectedFile, mockData);
+        onUploadComplete(selectedFile, mockData, videoUrl);
       }
     }
   }, [onUploadComplete]);
