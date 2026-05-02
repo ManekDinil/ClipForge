@@ -5,7 +5,7 @@ import traceback
 import uuid
 import ffmpeg
 import imageio_ffmpeg
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
@@ -46,7 +46,7 @@ def read_root():
     return {"message": "Welcome to ClipForge API"}
 
 @app.post("/process-video")
-async def process_video(file: UploadFile = File(...)):
+async def process_video(request: Request, file: UploadFile = File(...)):
     print('--- New Request Received ---')
     print('DEBUG: Request received!')
     try:
@@ -82,14 +82,15 @@ async def process_video(file: UploadFile = File(...)):
         # 4. Prompt the model
         prompt = (
             'Analyze the video and find the most engaging and viral moments. '
-            'Extract a maximum of 5 distinct clips. Each clip MUST be at least 15 seconds long and no longer than 60 seconds. '
+            'Extract a maximum of 5 distinct clips. Each clip MUST be at least 15 seconds long and STRICTLY no longer than 60 seconds. '
+            'If a moment is longer than 60 seconds, pick the most impactful 60-second window within it. '
             'Do NOT return granular word-by-word transcriptions for the "title". '
             'Return a JSON object strictly following this format: '
             '{"segments": [{"start": float, "end": float, "title": string, "score": int, "subtitles": [{"start": float, "end": float, "text": string}]}]} '
             'where "title" is a catchy viral hook, and "subtitles" is a phrase-by-phrase transcription synchronized with the audio.'
         )
-        print("Prompting Gemini 2.5 Flash...")
-        model = genai.GenerativeModel(model_name="gemini-2.5-flash")
+        print("Prompting Gemini Flash Latest...")
+        model = genai.GenerativeModel(model_name="gemini-flash-latest")
         response = model.generate_content(
             [video_file, prompt],
             generation_config={"response_mime_type": "application/json"},
@@ -129,16 +130,26 @@ async def process_video(file: UploadFile = File(...)):
             export_path = os.path.join(EXPORTS_DIR, clip_filename)
             
             try:
+                # Enforce hard 60s limit as a fallback
+                duration = end - start
+                if duration > 60:
+                    print(f"Warning: Segment {i} exceeds 60s ({duration}s). Truncating to 60s.")
+                    end = start + 60
+                    duration = 60
+
                 print(f"Trimming segment {i}: {start}s to {end}s...")
                 # Extract clip using ffmpeg-python and imageio-ffmpeg bundled binary
                 ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
                 (
                     ffmpeg
-                    .input(file_path, ss=start, t=end-start)
+                    .input(file_path, ss=start, t=duration)
                     .output(export_path, preset='ultrafast', crf=28)
                     .run(cmd=ffmpeg_exe, overwrite_output=True, capture_stdout=True, capture_stderr=True)
                 )
-                segment['clipUrl'] = f"http://127.0.0.1:8000/exports/{clip_filename}"
+                
+                # Dynamic clip URL based on the request's host
+                base_url = str(request.base_url).rstrip('/')
+                segment['clipUrl'] = f"{base_url}/exports/{clip_filename}"
             except ffmpeg.Error as ffmpeg_err:
                 err_msg = ffmpeg_err.stderr.decode('utf8') if ffmpeg_err.stderr else str(ffmpeg_err)
                 print(f"Warning: Failed to extract clip {i}:\n{err_msg}")

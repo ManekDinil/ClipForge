@@ -39,7 +39,7 @@ export default function ClipCard({ clip, onEdit }) {
   };
 
   return (
-    <div className="flex flex-col w-[260px] group">
+    <div className="flex flex-col w-full group transition-all duration-500 hover:-translate-y-2">
       {/* Video Container */}
       <div
         className="relative w-full aspect-[9/16] bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-lg cursor-pointer"
@@ -75,14 +75,19 @@ export default function ClipCard({ clip, onEdit }) {
           </div>
         </div>
 
-        {/* Caption Overlay (Moved higher to avoid controls as requested) */}
+        {/* Caption Overlay (Premium Outline Style) */}
         {activeSubtitle && (
-          <div className="absolute top-[35%] left-0 w-full px-4 flex justify-center pointer-events-none transition-opacity duration-200">
-            <div className="bg-white px-3 py-2 rounded-lg max-w-[90%] text-center shadow-xl transform -translate-y-1/2 border-2 border-black">
-              <p className="text-xs font-black text-black leading-tight uppercase tracking-tighter">
-                {activeSubtitle}
-              </p>
-            </div>
+          <div className="absolute top-[35%] left-0 w-full px-4 flex justify-center pointer-events-none transition-all duration-300 transform scale-105">
+            <p 
+              className="text-2xl font-black text-white text-center leading-tight uppercase tracking-tighter"
+              style={{
+                WebkitTextStroke: '2px black',
+                textShadow: '0 0 15px rgba(0,0,0,0.5), 0 5px 5px rgba(0,0,0,0.8)',
+                paintOrder: 'stroke fill'
+              }}
+            >
+              {activeSubtitle}
+            </p>
           </div>
         )}
       </div>
