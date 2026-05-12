@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save } from 'lucide-react';
+import { X, Save, Plus, Trash2 } from 'lucide-react';
 import AICaptionEditor from './AICaptionEditor';
 
 export default function EditModal({ clip, onClose, onSave }) {
   const [text, setText] = useState(clip.title);
-  const [showCaptions, setShowCaptions] = useState(true);
-  const [fontFamily, setFontFamily] = useState('font-sans');
-  const [fontSize, setFontSize] = useState(36);
-  const [captionPos, setCaptionPos] = useState(35); // top percentage
+  const [subtitles, setSubtitles] = useState(clip.subtitles || []);
+  const [showCaptions, setShowCaptions] = useState(clip.style?.showCaptions ?? true);
+  const [fontFamily, setFontFamily] = useState(clip.style?.fontFamily || 'font-sans');
+  const [fontSize, setFontSize] = useState(clip.style?.fontSize || 36);
+  const [captionPos, setCaptionPos] = useState(clip.style?.captionPos || 35); // top percentage
+
+  const handleAddSubtitle = () => {
+    setSubtitles([...subtitles, { start: clip.start, end: clip.start + 2, text: 'NEW CAPTION' }]);
+  };
+
+  const updateSubtitle = (index, field, value) => {
+    const newSubs = [...subtitles];
+    newSubs[index][field] = value;
+    setSubtitles(newSubs);
+  };
+
+  const removeSubtitle = (index) => {
+    setSubtitles(subtitles.filter((_, i) => i !== index));
+  };
 
   // Focus lock and escape key handler
   useEffect(() => {
@@ -19,7 +34,16 @@ export default function EditModal({ clip, onClose, onSave }) {
   }, [onClose]);
 
   const handleSave = () => {
-    onSave(clip.id, text);
+    onSave(clip.id, {
+      title: text,
+      subtitles: subtitles,
+      style: {
+        showCaptions,
+        fontFamily,
+        fontSize,
+        captionPos
+      }
+    });
   };
 
   return (
@@ -44,6 +68,7 @@ export default function EditModal({ clip, onClose, onSave }) {
             fontSize={fontSize}
             captionPos={captionPos}
             setCaptionPos={setCaptionPos}
+            subtitles={subtitles}
           />
         </div>
 
@@ -60,16 +85,47 @@ export default function EditModal({ clip, onClose, onSave }) {
           </div>
 
           <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2">
-            <label className="text-sm font-medium text-gray-400">Caption Text</label>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="w-full h-32 bg-black border border-gray-800 rounded-xl p-4 text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none resize-none transition-all"
-              placeholder="Enter your viral caption..."
-            />
-            <p className="text-xs text-gray-500">
-              This text will be overlaid directly on the video segment from {clip.start}s to {clip.end}s.
-            </p>
+            <div>
+              <label className="text-sm font-medium text-gray-400">Clip Title</label>
+              <input
+                type="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="w-full mt-1 bg-black border border-gray-800 rounded-lg p-2 text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all"
+                placeholder="Enter clip title..."
+              />
+            </div>
+            
+            <div className="flex flex-col gap-2 pt-2 border-t border-gray-800">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-400">Timeline Subtitles</label>
+                <button onClick={handleAddSubtitle} className="text-xs flex items-center gap-1 text-accent hover:text-white transition-colors">
+                  <Plus className="w-3 h-3" /> Add Subtitle
+                </button>
+              </div>
+              
+              <div className="flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
+                {subtitles.map((sub, index) => (
+                  <div key={index} className="flex flex-col gap-2 bg-[#0a0a0a] border border-gray-800 rounded-xl p-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-gray-500 font-mono">START</span>
+                      <input type="number" step="0.1" value={sub.start} onChange={(e) => updateSubtitle(index, 'start', parseFloat(e.target.value))} className="w-20 bg-black text-xs text-white border border-gray-800 rounded p-1.5 focus:border-accent outline-none" />
+                      <span className="text-[10px] text-gray-500 font-mono ml-2">END</span>
+                      <input type="number" step="0.1" value={sub.end} onChange={(e) => updateSubtitle(index, 'end', parseFloat(e.target.value))} className="w-20 bg-black text-xs text-white border border-gray-800 rounded p-1.5 focus:border-accent outline-none" />
+                      <button onClick={() => removeSubtitle(index)} className="ml-auto p-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <textarea 
+                      value={sub.text} 
+                      onChange={(e) => updateSubtitle(index, 'text', e.target.value)} 
+                      className="w-full h-16 bg-black text-sm text-white border border-gray-800 rounded p-2 focus:border-accent outline-none resize-none" 
+                      placeholder="Caption text..."
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Style Controls */}
             <div className="flex flex-col gap-5 pt-4 border-t border-gray-800">

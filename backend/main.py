@@ -8,8 +8,27 @@ import imageio_ffmpeg
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from typing import List, Optional
 from dotenv import load_dotenv
 import google.generativeai as genai
+
+class Subtitle(BaseModel):
+    start: float
+    end: float
+    text: str
+
+class Style(BaseModel):
+    showCaptions: bool
+    fontFamily: str
+    fontSize: float
+    captionPos: float
+
+class DownloadRequest(BaseModel):
+    clipUrl: str
+    subtitles: Optional[List[Subtitle]] = []
+    style: Optional[Style] = None
 
 # Explicitly load the .env file from the backend directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -169,3 +188,86 @@ async def process_video(request: Request, file: UploadFile = File(...)):
         # Clean up local file
         if 'file_path' in locals() and os.path.exists(file_path):
             os.remove(file_path)
+
+@app.post("/download-clip")
+async def download_clip(req: DownloadRequest):
+    # Extract filename from clipUrl
+    filename = req.clipUrl.split('/')[-1]
+    input_path = os.path.join(EXPORTS_DIR, filename)
+    
+    if not os.path.exists(input_path):
+        raise HTTPException(status_code=404, detail="Clip not found")
+        
+    if not req.style or not req.style.showCaptions or not req.subtitles:
+        return FileResponse(input_path, media_type="video/mp4", filename=filename)
+        
+    ass_path = os.path.join(EXPORTS_DIR, f"temp_{uuid.uuid4().hex[:8]}.ass")
+    try:
+        font_map = {
+            "font-sans": "Arial",
+            "font-serif": "Times New Roman",
+            "font-mono": "Courier New"
+        }
+        font_name = font_map.get(req.style.fontFamily, "Arial")
+        
+        # Scaling font size
+        scale_factor = 3.2
+        scaled_font_size = int(req.style.fontSize * scale_factor)
+        
+        # Top margin based on 1920 height
+        margin_v = int(1920 * req.style.captionPos / 100)
+        
+        with open(ass_path, "w", encoding="utf-8") as f:
+            f.write("[Script Info]\n")
+            f.write("ScriptType: v4.00+\n")
+            f.write("PlayResX: 1080\n")
+            f.write("PlayResY: 1920\n")
+            f.write("WrapStyle: 1\n\n")
+            
+            f.write("[V4+ Styles]\n")
+            f.write("Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n")
+            # Style definition
+            f.write(f"Style: Default,{font_name},{scaled_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,6,3,8,40,40,{margin_v},1\n\n")
+            
+            f.write("[Events]\n")
+            f.write("Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
+            
+            for sub in req.subtitles:
+                def format_time_ass(seconds):
+                    hrs = int(seconds // 3600)
+                    mins = int((seconds % 3600) // 60)
+                    secs = int(seconds % 60)
+                    cs = int(round((seconds - int(seconds)) * 100))
+                    return f"{hrs}:{mins:02d}:{secs:02d}.{cs:02d}"
+                    
+                text = sub.text.upper()
+                f.write(f"Dialogue: 0,{format_time_ass(sub.start)},{format_time_ass(sub.end)},Default,,0,0,0,,{text}\n")
+                
+        output_filename = f"burnt_{filename}"
+        output_path = os.path.join(EXPORTS_DIR, output_filename)
+        
+        # Use absolute path for windows ffmpeg filter, escaped correctly
+        abs_ass = os.path.abspath(ass_path).replace('\\', '\\\\').replace(':', '\\:')
+        
+        # 1. Crop to exactly 9:16 by taking min dimensions to prevent ffmpeg errors
+        # 2. Scale to exactly 1080:1920
+        # 3. Burn subtitles
+        vf_filter = f"crop='min(iw,ih*9/16)':'min(ih,iw*16/9)',scale=1080:1920,subtitles='{abs_ass}'"
+        
+        ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+        (
+            ffmpeg
+            .input(input_path)
+            .output(output_path, vf=vf_filter, preset='ultrafast', crf=28)
+            .run(cmd=ffmpeg_exe, overwrite_output=True, capture_stdout=True, capture_stderr=True)
+        )
+        
+        return FileResponse(output_path, media_type="video/mp4", filename=output_filename)
+        
+    except ffmpeg.Error as e:
+        err_msg = e.stderr.decode('utf8') if e.stderr else str(e)
+        print(f"FFmpeg Error: {err_msg}")
+        raise HTTPException(status_code=500, detail="Failed to burn captions")
+    finally:
+        if 'ass_path' in locals() and os.path.exists(ass_path):
+            os.remove(ass_path)

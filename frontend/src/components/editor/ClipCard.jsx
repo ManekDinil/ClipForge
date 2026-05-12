@@ -1,10 +1,53 @@
 import React, { useRef, useState } from 'react';
-import { Calendar, Edit3, Scissors, Play } from 'lucide-react';
+import { Calendar, Edit3, Scissors, Play, Download, Loader2 } from 'lucide-react';
 
 export default function ClipCard({ clip, onEdit }) {
   const videoRef = useRef(null);
 
   const [activeSubtitle, setActiveSubtitle] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const backendUrl = 'http://127.0.0.1:8000/download-clip'; 
+      const response = await fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          clipUrl: clip.clipUrl,
+          subtitles: clip.subtitles,
+          style: clip.style || {
+            showCaptions: true,
+            fontFamily: 'font-sans',
+            fontSize: 36,
+            captionPos: 35
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `viral_clip_${clip.id}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to download clip. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const handleTimeUpdate = (e) => {
     // Current time of the clip playback
@@ -108,6 +151,14 @@ export default function ClipCard({ clip, onEdit }) {
             </button>
             <button className="hover:text-white transition-colors" title="Trim">
               <Scissors className="w-4 h-4" />
+            </button>
+            <button 
+              className={`hover:text-accent transition-colors ${isDownloading || !clip.clipUrl ? 'opacity-50 cursor-not-allowed text-accent' : ''}`}
+              title="Download Burnt-in Clip"
+              onClick={handleDownload}
+              disabled={isDownloading || !clip.clipUrl}
+            >
+              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             </button>
           </div>
         </div>

@@ -50,9 +50,9 @@ export default function ClipEditor() {
     }
   }, []);
 
-  const handleSaveTitle = (id, newTitle) => {
+  const handleSaveClipDetails = (id, details) => {
     setTranscriptions(prev => 
-      prev.map(t => (t.id === id ? { ...t, title: newTitle } : t))
+      prev.map(t => (t.id === id ? { ...t, title: details.title, subtitles: details.subtitles, style: details.style } : t))
     );
     setEditingClipId(null);
   };
@@ -106,7 +106,7 @@ export default function ClipEditor() {
           <EditModal 
             clip={editingClip} 
             onClose={() => setEditingClipId(null)}
-            onSave={handleSaveTitle}
+            onSave={handleSaveClipDetails}
           />
         )}
         

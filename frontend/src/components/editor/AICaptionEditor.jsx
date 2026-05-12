@@ -3,7 +3,8 @@ import { Play } from 'lucide-react';
 
 export default function AICaptionEditor({ 
   clip, activeClipUrl, videoRef, onTimeUpdate,
-  showCaptions = true, fontFamily = 'font-sans', fontSize = 36, captionPos = 35, setCaptionPos
+  showCaptions = true, fontFamily = 'font-sans', fontSize = 36, captionPos = 35, setCaptionPos,
+  subtitles
 }) {
   const [activeSubtitle, setActiveSubtitle] = React.useState("");
   const containerRef = React.useRef(null);
@@ -35,7 +36,8 @@ export default function AICaptionEditor({
   const handleTimeUpdate = (e) => {
     const time = e.target.currentTime;
     // Sync with global subtitles timestamps
-    const currentSub = (clip?.subtitles || []).find(
+    const subsToUse = subtitles || clip?.subtitles || [];
+    const currentSub = subsToUse.find(
       s => time + (clip?.start || 0) >= s.start && time + (clip?.start || 0) <= s.end
     );
     setActiveSubtitle(currentSub ? currentSub.text : "");
